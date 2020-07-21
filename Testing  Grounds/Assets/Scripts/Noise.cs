@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.ShaderGraph;
+//using UnityEditor.ShaderGraph;
 using UnityEngine;
 
 public static class Noise 
