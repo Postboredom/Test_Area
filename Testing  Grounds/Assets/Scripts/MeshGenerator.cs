@@ -67,13 +67,49 @@ public class MeshData
         triangleIndex += 3;
     }
 
+    Vector3[] CalculateNormals()
+    {
+        Vector3[] vertexNormals = new Vector3[verts.Length];
+        int triangleCount = triangles.Length / 3;
+        for(int ii = 0; ii < triangleCount; ii++)
+        {
+            int normalTriangleIndex = ii * 3;
+            int vertexIndexA = triangles[normalTriangleIndex];
+            int vertexIndexB = triangles[normalTriangleIndex+1];
+            int vertexIndexC = triangles[normalTriangleIndex+2];
+
+            Vector3 triangleNormal = SurfaceNormalFromIndices(vertexIndexA, vertexIndexB, vertexIndexC);
+            vertexNormals[vertexIndexA] += triangleNormal;
+            vertexNormals[vertexIndexB] += triangleNormal;
+            vertexNormals[vertexIndexC] += triangleNormal;
+        }
+
+        for(int ii = 0;ii<vertexNormals.Length;ii++)
+        {
+            vertexNormals[ii].Normalize();
+        }
+
+        return vertexNormals;
+    }
+
+    Vector3 SurfaceNormalFromIndices(int indexA,int indexB, int indexC)
+    {
+        Vector3 pointA = verts[indexA];
+        Vector3 pointB = verts[indexB];
+        Vector3 pointC = verts[indexC];
+
+        Vector3 sideAB = pointB - pointA;
+        Vector3 sideAC = pointC - pointA;
+        return Vector3.Cross(sideAB, sideAC).normalized;
+    }
+
     public Mesh CreateMesh()
     {
         Mesh mesh = new Mesh();
         mesh.vertices = verts;
         mesh.uv = uvs;
         mesh.triangles = triangles;
-        mesh.RecalculateNormals();
+        mesh.normals = CalculateNormals();
         return mesh;
     }
 }
